@@ -5,14 +5,22 @@ import io
 import random
 import datetime
 import requests
+
+
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
 
+
 class Maoyan(object):
+    """猫眼top100"""
+
+
     def __init__(self,headers, url):
         self.headers = headers
         self.url = url
 
+
     def get_req(self):
+        """翻页"""
         for i in range(0,100,10):
             url = self.url + str(i)
             resp = requests.get(url=self.url,headers=self.headers)
@@ -20,15 +28,18 @@ class Maoyan(object):
             time.sleep(time_sleep)
             self.re_check(resp.text)
 
+
     def re_check(self,html):
+        """取值"""
         pattern = re.compile('<dd>.*?board-index.*?>(\d+)</i>.*?data-src="(.*?)".*?name"><a.*?>(.*?)</a>.*?star">(.*?)</p>.*?releasetime">(.*?)</p>.*?integer">(.*?)</i>.*?fraction">(.*?)</i>.*?</dd>',re.S)
         img_href_results = re.findall(pattern,html)
         self.inster_sql(img_href_results)
     
+    
     def inster_sql(self,inster_like):
+        """整理"""
         k = []
         for i in inster_like:
-            # print(i)
             ph = i[0]
             img = i[1]
             title = i[2]

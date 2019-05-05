@@ -5,8 +5,11 @@ import requests
 import re
 from lxml import etree
 from bs4 import BeautifulSoup
+
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
+
 class Kuanshou(object):
+    """快手热门"""
 
     def __init__(self):
         self.url = "https://live.kuaishou.com/cate/DQRM/?page="
@@ -15,19 +18,24 @@ class Kuanshou(object):
             "Host":"live.kuaishou.com"
         }
 
+
     def get_req(self):
+        """翻页"""
         for i in range(1,10):
             url = self.url + str(i)
             resp = requests.get(url=url, headers=self.headers)
             self.bs4_check(resp.text)
-            # print(resp.text)
     
+
     def check_n(self, text):
+        """去噪"""
         if isinstance(text, str):
             return text.replace("\n","").split()
         return str(text).replace("\n","").split()
 
+
     def bs4_check(self, html):
+        """取值"""
         soup = BeautifulSoup(html,"lxml")
         ul_list = soup.find_all(attrs={"class":"live-card-list"})  # 根据标签名获取
         for ul in ul_list:
@@ -42,7 +50,6 @@ class Kuanshou(object):
                 except Exception as e:
                     continue    
                 
-
 
 if __name__ == "__main__":
     kuaishou = Kuanshou()
